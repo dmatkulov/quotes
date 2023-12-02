@@ -35,12 +35,10 @@ const Quotes: React.FC = () => {
           ...quotes,
           ...prevState
         }));
-        console.log('map', quotes);
       });
       
       if (params.quoteId) {
-        const categoryFilter = newQuotes.filter((quote) =>
-          Object.values(quote)[0].category === params.quoteId);
+        const categoryFilter = newQuotes.filter((quote) => Object.values(quote)[0].category === params.quoteId);
         const selectedCategory = categoryFilter.reduce((acc, quote) => (
           {...acc, ...quote}
         ), {});
