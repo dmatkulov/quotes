@@ -1,6 +1,7 @@
 import Toolbar from './components/Toolbar/Toolbar.tsx';
 import {Route, Routes} from 'react-router-dom';
-import Home from './containers/Home/Home.tsx';
+import Quotes from './containers/Quotes/Quotes.tsx';
+import Navbar from './components/Navbar/Navbar.tsx';
 
 function App() {
   
@@ -9,12 +10,20 @@ function App() {
       <header>
         <Toolbar/>
       </header>
-      <Routes>
-        <Route path="/" element={(
-          <Home/>
-        )}
-        />
-      </Routes>
+      <div className="grid grid-cols-[200px_minmax(900px,_1fr)_100px] gap-6">
+        <Navbar/>
+        <div>
+          <Routes>
+            <Route path="/" element={(
+              <Quotes/>
+            )}
+            />
+            <Route path="/quotes/:quoteId" element={(
+              <Quotes/>
+            )}/>
+          </Routes>
+        </div>
+      </div>
     </div>
   );
 }

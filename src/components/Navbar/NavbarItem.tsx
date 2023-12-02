@@ -11,7 +11,7 @@ const NavbarItem: React.FC<Props> = ({linkItem}) => {
       <li className="pb-3 mb-2 border-b border-amber-300"
       >
         <Link
-          to={'quotes' + linkItem.id}
+          to={'/quotes/' + linkItem.id}
         >
           {linkItem.category}
         </Link>

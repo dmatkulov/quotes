@@ -1,13 +1,19 @@
 import React from 'react';
+import {Quote} from '../../types';
 
-const QuoteCard: React.FC = () => {
+interface Props {
+  quote: Quote;
+  id?: string;
+}
+const QuoteCard: React.FC<Props> = React.memo(function QuoteCard({quote}) {
   return (
     <div>
-      <h1>Title</h1>
+      <h1>{quote.category}</h1>
       <div>
         <p>
-          Start by making a list of the things you spend your time doing during an average day. How do you feel before you do each thing? How do you feel afterward? Take note of the things that leave you feeling energized and the places where you show up as the best version of yourself.
+          "{quote.quote}"
         </p>
+        <span>{quote.author}</span>
         <div>
           <button>Delete</button>
           <button>Edit</button>
@@ -15,6 +21,8 @@ const QuoteCard: React.FC = () => {
       </div>
     </div>
   );
-};
+}, (prevProps, nextProps) => {
+  return prevProps.quote.author === nextProps.quote.author && prevProps.quote.category === nextProps.quote.category;
+});
 
 export default QuoteCard;
