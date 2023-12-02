@@ -3,10 +3,9 @@ import QuoteCard from '../../components/QuoteCard/QuoteCard.tsx';
 import {useParams} from 'react-router-dom';
 import {QuoteData} from '../../types';
 import axiosApi from '../../axiosApi.ts';
-// import {LinkItems} from '../../lib/constants.ts';
 
 const Quotes: React.FC = () => {
-  const params = useParams() as {quoteId: string};
+  const params = useParams() as { quoteId: string };
   let url = 'quotes/.json';
   if (params.quoteId) {
     url = `/quotes.json?orderBy="category"&equalTo="${params.quoteId}"`;
@@ -15,68 +14,46 @@ const Quotes: React.FC = () => {
   const [quotes, setQuotes] = useState<QuoteData>({});
   const [isLoading, setIsLoading] = useState(false);
   
-  
-  const fetchData = useCallback( async () => {
+  const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
       const quoteResponse = await axiosApi.get<QuoteData>(url);
       const fireBaseData = quoteResponse.data;
       
-        const promises = Object.keys(fireBaseData).map(async (id) => {
-          return {
-            [id]: {
-              author: fireBaseData[id].author,
-              category: fireBaseData[id].category,
-              quote: fireBaseData[id].quote,
-            }
-          };
-        });
-        const newQuotes = await Promise.all(promises);
-        console.log(newQuotes);
-        if (params.quoteId) {
-          newQuotes.forEach((quotes) => {
-            setQuotes({
-              ...quotes,
-            });
-          });
-        } else {
-          newQuotes.forEach((quotes) => {
-            setQuotes((prevState) => ({
-              ...quotes,
-              ...prevState,
-            }));
-          });
-        }
+      const promises = Object.keys(fireBaseData).map(async (id) => {
+        return {
+          [id]: {
+            author: fireBaseData[id].author,
+            category: fireBaseData[id].category,
+            quote: fireBaseData[id].quote,
+          }
+        };
+      });
+      const newQuotes = await Promise.all(promises);
+      newQuotes.map((quotes) => {
+        setQuotes((prevState) => ({
+          ...quotes,
+          ...prevState
+        }));
+        console.log('map', quotes);
+      });
+      
+      if (params.quoteId) {
+        const categoryFilter = newQuotes.filter((quote) =>
+          Object.values(quote)[0].category === params.quoteId);
+        const selectedCategory = categoryFilter.reduce((acc, quote) => (
+          {...acc, ...quote}
+        ), {});
+        setQuotes({...selectedCategory});
+      }
     } finally {
       setIsLoading(false);
     }
-  }, [url, params.quoteId]);
+  }, [params.quoteId, url]);
   
   useEffect(() => {
     void fetchData();
   }, [fetchData]);
-  
-  
-  
-  // const formattedTitle = useCallback((category: string) => {
-  //   const words = category.split('-');
-  //
-  // }, []);
-  //
-  // let title = null;
-  //
-  // Object.keys(quotes).map((id) => {
-  //   switch (quotes[id].category) {
-  //     case 'star-wars':
-  //       title = 'Star Wars';
-  //       break;
-  //     case 'famous-people':
-  //       title = 'Famous people';
-  //       break;
-  //     default:
-  //       title = 'All';
-  //   }
-  // });
   
   return (
     <>

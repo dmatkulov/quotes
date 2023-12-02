@@ -9,7 +9,6 @@ interface Props {
 const QuoteCard: React.FC<Props> = React.memo(function QuoteCard({quote, id}) {
   return (
     <div>
-      <h1>{quote.category}</h1>
       <div>
         <p>
           "{quote.quote}"

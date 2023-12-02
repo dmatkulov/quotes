@@ -1,13 +1,35 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Quote} from '../../types';
 import axiosApi from '../../axiosApi.ts';
+import {useNavigate, useParams} from "react-router-dom";
 
 const QuoteForm: React.FC = () => {
+  const navigate = useNavigate();
+  const params = useParams() as { quoteId: string };
+  const url = 'quotes/' + params.quoteId + '.json';
+  
+  
   const [quote, setQuote] = useState<Quote>({
     author: '',
     category: '',
     quote: '',
   });
+  
+  const fetchExistingPost = useCallback(async () => {
+    try {
+      const postResponse = await axiosApi.get<Quote>(url);
+      
+      setQuote(postResponse.data);
+    } finally {
+      console.log('edited');
+    }
+  }, [url]);
+  
+  useEffect(() => {
+    if (params.quoteId) {
+      void fetchExistingPost();
+    }
+  }, [params.quoteId, fetchExistingPost]);
   
   const quoteChange = useCallback((event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const {name, value} = event.target;
@@ -22,16 +44,27 @@ const QuoteForm: React.FC = () => {
     event.preventDefault();
     
     try {
-      await axiosApi.post('quotes.json', quote);
+      if (params.quoteId) {
+        await axiosApi.put(`quotes/${params.quoteId}.json`, quote);
+      } else {
+        await axiosApi.post('quotes.json', quote);
+      }
     } finally {
+      navigate('/');
       console.log('submitted');
     }
   };
   
+  let title = 'Submit new quote';
+  
+  if (params.quoteId) {
+    title = 'Edit quote';
+  }
+  
   return (
     <div>
-      Submit new quote
-      <form onSubmit={onFormSubmit}>
+      {title}
+      <form onSubmit={onFormSubmit} className="w-96">
         <div>
           <label htmlFor="category">Category</label>
           <select
@@ -42,7 +75,7 @@ const QuoteForm: React.FC = () => {
             className="w-96 font-bold py-1.5 px-2 block border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
             focus:outline-none focus:border-sky-500 mb-4 mt-2"
           >
-            <option disabled>Select category</option>
+            <option>Select category</option>
             <option value="star-wars">Star Wars</option>
             <option value="famous-people">Famous people</option>
             <option value="saying">Saying</option>
@@ -75,7 +108,12 @@ const QuoteForm: React.FC = () => {
             focus:outline-none focus:border-sky-500 mt-2"
           />
         </div>
-        <button>Save</button>
+        <button
+          className="px-4 py-2 bg-blue-700 text-white rounded-md mt-8 w-full mb-4"
+          type="submit"
+        >
+          Save
+        </button>
       </form>
     </div>
   );

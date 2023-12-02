@@ -19,7 +19,7 @@ const Toolbar: React.FC = () => {
             </li>
             <li>
               <NavLink
-                to="/add-quote"
+                to="/quotes/add-quote"
               >
                 Submit new quote
               </NavLink>
