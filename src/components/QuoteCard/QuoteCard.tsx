@@ -1,11 +1,12 @@
 import React from 'react';
 import {Quote} from '../../types';
+import {Link} from 'react-router-dom';
 
 interface Props {
   quote: Quote;
-  id?: string;
+  id: string;
 }
-const QuoteCard: React.FC<Props> = React.memo(function QuoteCard({quote}) {
+const QuoteCard: React.FC<Props> = React.memo(function QuoteCard({quote, id}) {
   return (
     <div>
       <h1>{quote.category}</h1>
@@ -15,8 +16,8 @@ const QuoteCard: React.FC<Props> = React.memo(function QuoteCard({quote}) {
         </p>
         <span>{quote.author}</span>
         <div>
+          <Link to={'/quotes/' + id + '/edit'}>Edit</Link>
           <button>Delete</button>
-          <button>Edit</button>
         </div>
       </div>
     </div>

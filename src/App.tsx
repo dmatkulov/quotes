@@ -2,6 +2,7 @@ import Toolbar from './components/Toolbar/Toolbar.tsx';
 import {Route, Routes} from 'react-router-dom';
 import Quotes from './containers/Quotes/Quotes.tsx';
 import Navbar from './components/Navbar/Navbar.tsx';
+import QuoteForm from './containers/QuoteForm/QuoteForm.tsx';
 
 function App() {
   
@@ -20,6 +21,9 @@ function App() {
             />
             <Route path="/quotes/:quoteId" element={(
               <Quotes/>
+            )}/>
+            <Route path="/quotes/:quoteId/edit" element={(
+              <QuoteForm/>
             )}/>
           </Routes>
         </div>
