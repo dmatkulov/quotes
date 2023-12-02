@@ -3,8 +3,9 @@ import QuoteCard from '../../components/QuoteCard/QuoteCard.tsx';
 import {Link, useParams} from 'react-router-dom';
 import {QuoteData} from '../../types';
 import axiosApi from '../../axiosApi.ts';
-import Spinner from "../../components/Spinner/Spinner.tsx";
-import Title from "../../components/Title/Title.tsx";
+import Spinner from '../../components/Spinner/Spinner.tsx';
+import Title from '../../components/Title/Title.tsx';
+import {formatTitle} from '../../lib/constants.ts';
 
 const Quotes: React.FC = () => {
   const params = useParams() as { quoteId: string };
@@ -40,11 +41,14 @@ const Quotes: React.FC = () => {
       });
       
       if (params.quoteId) {
-        const categoryFilter = newQuotes.filter((quote) => Object.values(quote)[0].category === params.quoteId);
-        const selectedCategory = categoryFilter.reduce((acc, quote) => (
+        const selectedQuotes = newQuotes.filter((quote) => {
+          return Object.keys(quote).map(id => quote[id].category === params.quoteId);
+        });
+        const filteredByCategory = selectedQuotes.reduce((acc, quote) => (
           {...acc, ...quote}
-        ), {});
-        setQuotes({...selectedCategory});
+        ), {} as QuoteData);
+        
+        setQuotes({...filteredByCategory});
       }
     } finally {
       setIsLoading(false);
@@ -55,30 +59,24 @@ const Quotes: React.FC = () => {
     void fetchData();
   }, [fetchData]);
   
-  let title = 'All';
-  
-  if (params.quoteId) {
-      switch (params.quoteId) {
-        case 'famous-people':
-          title = 'Famous people';
-          break;
-        case 'star-wars':
-          title = 'Star Wars';
-          break;
-        case 'humour':
-          title = 'Humour';
-          break;
-        case 'motivational':
-          title = 'Motivational';
-          break;
-        case 'saying':
-          title = 'Saying';
-          break;
-        default:
-          title = 'All';
+  const deletePost = useCallback(async (id: string) => {
+    setIsLoading(true);
+      try {
+        await axiosApi.delete<QuoteData>('quotes/' + id + '.json');
+        setQuotes((prevState) => {
+          return Object.keys(prevState).reduce((acc, key) => {
+            if (key !== id) {
+              acc[key] = prevState[key];
+            }
+            return acc;
+          }, {} as QuoteData);
+        });
+      } finally {
+        setIsLoading(false);
       }
-  }
+    },[]);
   
+  const title: string = formatTitle(params.quoteId);
   
   return (
     <div className="w-full">
@@ -87,9 +85,10 @@ const Quotes: React.FC = () => {
         {isLoading ? (
           <Spinner/>
         ) : Object.keys(quotes).length > 0 ? (
-          <div>
+          <div className="grid grid-cols-4 gap-5">
             {Object.keys(quotes).map((id) => (
               <QuoteCard
+                onDelete={(id) => deletePost(id)}
                 quote={quotes[id]}
                 key={id}
                 id={id}

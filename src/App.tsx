@@ -16,6 +16,10 @@ function App() {
             <Home/>
           )}
           />
+          <Route path="/quotes" element={(
+            <Home/>
+          )}
+          />
           <Route path="/quotes/:quoteId" element={(
             <Home/>
           )}/>
