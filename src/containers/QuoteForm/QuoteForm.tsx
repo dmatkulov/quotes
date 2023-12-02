@@ -2,6 +2,8 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {Quote} from '../../types';
 import axiosApi from '../../axiosApi.ts';
 import {useNavigate, useParams} from "react-router-dom";
+import Title from "../../components/Title/Title.tsx";
+import Spinner from "../../components/Spinner/Spinner.tsx";
 
 const QuoteForm: React.FC = () => {
   const navigate = useNavigate();
@@ -15,13 +17,15 @@ const QuoteForm: React.FC = () => {
     quote: '',
   });
   
+  const [isLoading, setIsLoading] = useState(false);
+  
   const fetchExistingPost = useCallback(async () => {
+    setIsLoading(true);
     try {
       const postResponse = await axiosApi.get<Quote>(url);
-      
       setQuote(postResponse.data);
     } finally {
-      console.log('edited');
+      setIsLoading(false);
     }
   }, [url]);
   
@@ -61,60 +65,74 @@ const QuoteForm: React.FC = () => {
     title = 'Edit quote';
   }
   
+  let form = (
+    <form onSubmit={onFormSubmit} className="w-96 mx-auto">
+      <div>
+        <label htmlFor="category">Category</label>
+        <select
+          onChange={quoteChange}
+          value={quote.category}
+          name="category"
+          id="category"
+          className="w-96 font-bold py-1.5 px-2 block border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+            focus:outline-none focus:border-sky-500 mb-4 mt-2"
+        >
+          <option>Select category</option>
+          <option value="star-wars">Star Wars</option>
+          <option value="famous-people">Famous people</option>
+          <option value="saying">Saying</option>
+          <option value="humour">Humour</option>
+          <option value="motivational">Motivational</option>
+        </select>
+      </div>
+      <div>
+        <label htmlFor="author">Author</label>
+        <input
+          onChange={quoteChange}
+          value={quote.author}
+          required
+          id="author"
+          type="text"
+          name="author"
+          className="w-96 font-bold py-1.5 px-2 block border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+            focus:outline-none focus:border-sky-500 mb-4 mt-2"
+        />
+      </div>
+      <div>
+        <label htmlFor="quote">Quote</label>
+        <textarea
+          onChange={quoteChange}
+          value={quote.quote}
+          required
+          id="quote"
+          name="quote"
+          className="w-96 h-52 py-1.5 px-2 block border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+            focus:outline-none focus:border-sky-500 mt-2"
+        />
+      </div>
+      <button
+        className="px-4 py-2 bg-blue-700 text-white rounded-md mt-8 w-full mb-4"
+        type="submit"
+      >
+        Save
+      </button>
+    </form>
+  );
+  
+  if (isLoading) {
+    form = (
+      <div>
+        <Spinner/>
+      </div>
+    );
+  }
+  
   return (
     <div>
-      {title}
-      <form onSubmit={onFormSubmit} className="w-96">
-        <div>
-          <label htmlFor="category">Category</label>
-          <select
-            onChange={quoteChange}
-            value={quote.category}
-            name="category"
-            id="category"
-            className="w-96 font-bold py-1.5 px-2 block border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
-            focus:outline-none focus:border-sky-500 mb-4 mt-2"
-          >
-            <option>Select category</option>
-            <option value="star-wars">Star Wars</option>
-            <option value="famous-people">Famous people</option>
-            <option value="saying">Saying</option>
-            <option value="humour">Humour</option>
-            <option value="motivational">Motivational</option>
-          </select>
-        </div>
-        <div>
-          <label htmlFor="author">Author</label>
-          <input
-            onChange={quoteChange}
-            value={quote.author}
-            required
-            id="author"
-            type="text"
-            name="author"
-            className="w-96 font-bold py-1.5 px-2 block border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
-            focus:outline-none focus:border-sky-500 mb-4 mt-2"
-          />
-        </div>
-        <div>
-          <label htmlFor="quote">Quote</label>
-          <textarea
-            onChange={quoteChange}
-            value={quote.quote}
-            required
-            id="quote"
-            name="quote"
-            className="w-96 h-52 py-1.5 px-2 block border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
-            focus:outline-none focus:border-sky-500 mt-2"
-          />
-        </div>
-        <button
-          className="px-4 py-2 bg-blue-700 text-white rounded-md mt-8 w-full mb-4"
-          type="submit"
-        >
-          Save
-        </button>
-      </form>
+      <div className="text-center">
+        <Title title={title}/>
+      </div>
+      {form}
     </div>
   );
 };

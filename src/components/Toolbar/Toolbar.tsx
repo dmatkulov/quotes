@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link, NavLink} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 const Toolbar: React.FC = () => {
   return (
@@ -11,18 +11,18 @@ const Toolbar: React.FC = () => {
         <nav>
           <ul className="flex gap-5">
             <li>
-              <NavLink
+              <Link
                 to="/"
               >
                 Quotes
-              </NavLink>
+              </Link>
             </li>
             <li>
-              <NavLink
+              <Link
                 to="/quotes/add-quote"
               >
                 Submit new quote
-              </NavLink>
+              </Link>
             </li>
           </ul>
         </nav>

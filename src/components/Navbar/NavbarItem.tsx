@@ -1,6 +1,6 @@
 import React from 'react';
 import {LinkItem} from '../../types';
-import {Link} from 'react-router-dom';
+import {NavLink} from 'react-router-dom';
 
 interface Props {
   linkItem: LinkItem
@@ -8,13 +8,13 @@ interface Props {
 const NavbarItem: React.FC<Props> = ({linkItem}) => {
   return (
     <>
-      <li className="pb-3 mb-2 border-b border-amber-300"
+      <li className="border-b border-amber-300"
       >
-        <Link
+        <NavLink
           to={'/quotes/' + linkItem.id}
         >
           {linkItem.category}
-        </Link>
+        </NavLink>
       </li>
     </>
   );

@@ -4,9 +4,9 @@ import NavbarItem from './NavbarItem.tsx';
 import {Link} from 'react-router-dom';
 const Navbar: React.FC = () => {
   return (
-    <aside className="block bg-amber-100 rounded-lg px-4 py-4">
-      <ul>
-        <li className="pb-3 mb-2 border-b border-amber-300">
+    <div className="bg-amber-100 rounded-lg px-4 py-4 mb-10">
+      <ul className="flex justify-between px-20 items-center">
+        <li className="border-b border-amber-300">
           <Link to="/">
             All
           </Link>
@@ -18,7 +18,7 @@ const Navbar: React.FC = () => {
           />
         ))}
       </ul>
-    </aside>
+    </div>
   );
 };
 

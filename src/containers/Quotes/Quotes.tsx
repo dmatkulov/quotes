@@ -1,8 +1,10 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import QuoteCard from '../../components/QuoteCard/QuoteCard.tsx';
-import {useParams} from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 import {QuoteData} from '../../types';
 import axiosApi from '../../axiosApi.ts';
+import Spinner from "../../components/Spinner/Spinner.tsx";
+import Title from "../../components/Title/Title.tsx";
 
 const Quotes: React.FC = () => {
   const params = useParams() as { quoteId: string };
@@ -53,11 +55,37 @@ const Quotes: React.FC = () => {
     void fetchData();
   }, [fetchData]);
   
+  let title = 'All';
+  
+  if (params.quoteId) {
+      switch (params.quoteId) {
+        case 'famous-people':
+          title = 'Famous people';
+          break;
+        case 'star-wars':
+          title = 'Star Wars';
+          break;
+        case 'humour':
+          title = 'Humour';
+          break;
+        case 'motivational':
+          title = 'Motivational';
+          break;
+        case 'saying':
+          title = 'Saying';
+          break;
+        default:
+          title = 'All';
+      }
+  }
+  
+  
   return (
-    <>
+    <div className="w-full">
+      <Title title={title}/>
       <div>
         {isLoading ? (
-          <h1>Loading...</h1>
+          <Spinner/>
         ) : Object.keys(quotes).length > 0 ? (
           <div>
             {Object.keys(quotes).map((id) => (
@@ -69,10 +97,18 @@ const Quotes: React.FC = () => {
             ))}
           </div>
         ) : (
-          <p>No quotes found.</p>
+          <div className="text-center mt-10">
+            <p className="mb-10">No quotes found</p>
+            <Link
+              className="px-4 py-2 bg-blue-700 text-white rounded-md mt-8 w-full mb-4"
+              to="/quotes/add-quote"
+            >
+              Add new quote
+            </Link>
+          </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
 
